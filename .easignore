@@ -1,0 +1,43 @@
+# Dependencies are installed on EAS builder
+node_modules/
+**/node_modules/**
+
+# VCS and CI config
+.git/
+.github/
+.gitlab/
+
+# OS / editor junk
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Expo/Metro caches
+.expo/
+.expo-shared/
+
+# Build artifacts
+android/app/build/
+android/build/
+android/.gradle/
+android/.cxx/
+android/local.properties
+ios/build/
+ios/DerivedData/
+ios/Pods/
+
+# Common bundler output
+build/
+dist/
+.out/
+.next/
+coverage/
+storybook-static/
+
+# Test, docs and misc heavy folders (optional)
+__tests__/
+**/*.log
+*.zip
+*.apk
+*.aab
