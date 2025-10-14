@@ -10,9 +10,20 @@ interface Props {
   onPress?: () => void;
   diameter?: number;
   variant?: Variant;
+  stopPropagation?: boolean;
+  accessibilityLabel?: string;
+  accessibilityHint?: string;
 }
 
-export function ButtonIcon({ icon, onPress, diameter = 64, variant = 'primary' }: Props) {
+export function ButtonIcon({
+  icon,
+  onPress,
+  diameter = 64,
+  variant = 'primary',
+  stopPropagation = false,
+  accessibilityLabel,
+  accessibilityHint,
+}: Props) {
   const [pressed, setPressed] = useState(false);
 
   const base = 'items-center justify-center rounded-full shadow-dropShadow';
@@ -25,10 +36,22 @@ export function ButtonIcon({ icon, onPress, diameter = 64, variant = 'primary' }
 
   return (
     <Pressable
-      onPress={onPress}
-      onPressIn={() => setPressed(true)}
-      onPressOut={() => setPressed(false)}
+      onPress={(e) => {
+        if (stopPropagation) e.stopPropagation();
+        onPress?.();
+      }}
+      onPressIn={(e) => {
+        if (stopPropagation) e.stopPropagation();
+        setPressed(true);
+      }}
+      onPressOut={(e) => {
+        if (stopPropagation) e.stopPropagation();
+        setPressed(false);
+      }}
       style={{ width: diameter, height: diameter }}
+      accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel}
+      accessibilityHint={accessibilityHint}
       className={twMerge(base, bg, pressed ? 'opacity-90' : '')}
     >
       <View>
