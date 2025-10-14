@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { AccessibilityRole, Pressable, Text, View } from 'react-native';
 import { twMerge } from 'tailwind-merge';
 
 type ButtonVariant = 'secondary' | 'secondaryBlue' | 'secondaryBlueLight';
@@ -11,6 +11,8 @@ interface Props {
   textClassName?: string;
   disabled?: boolean;
   variant?: ButtonVariant;
+  accessibilityLabel?: string;
+  accessibilityRole?: AccessibilityRole;
 }
 
 const getVariantClasses = (variant: ButtonVariant, disabled: boolean, pressed: boolean) => {
@@ -18,7 +20,15 @@ const getVariantClasses = (variant: ButtonVariant, disabled: boolean, pressed: b
 
   switch (variant) {
     case 'secondary':
-      return twMerge(baseClasses, 'bg-surfacePrimary dark:bg-surfacePrimary-dark', 'border-0');
+      return twMerge(
+        baseClasses,
+        disabled
+          ? 'bg-surfaceDisabled dark:bg-surfaceDisabled-dark'
+          : pressed
+            ? 'bg-surfaceTertiary dark:bg-surfaceTertiary-dark'
+            : 'bg-surfacePrimary dark:bg-surfacePrimary-dark',
+        'border-0',
+      );
     case 'secondaryBlue':
       return twMerge(
         baseClasses,
@@ -75,6 +85,8 @@ export const ButtonPrimary = ({
   textClassName,
   disabled = false,
   variant = 'secondaryBlue',
+  accessibilityLabel,
+  accessibilityRole = 'button',
 }: Props) => {
   const [pressed, setPressed] = useState(false);
 
@@ -96,6 +108,8 @@ export const ButtonPrimary = ({
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
       disabled={disabled}
+      accessibilityRole={accessibilityRole}
+      accessibilityLabel={accessibilityLabel ?? title}
       className={twMerge(variantClasses, sizeClasses, 'w-full', className)}
     >
       <View className="flex-row gap-2 justify-center items-center">

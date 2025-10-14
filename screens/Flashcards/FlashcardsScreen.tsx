@@ -1,18 +1,105 @@
+import { mapToStudyCards, spanishFlashcards } from '@/api/database/flashcards';
+import { ProgressBar } from '@/components/progress/ProgressBar';
+import { ThemedText } from '@/components/typography/ThemedText';
+import { useEffect, useState } from 'react';
 import { View } from 'react-native';
+import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated';
 import { Flashcard } from './components/Flashcard';
 import { FlashcardButtons } from './components/FlashcardButtons';
 
 export function FlashcardsScreen() {
+  const [deck, setDeck] = useState(() => {
+    const base = mapToStudyCards(spanishFlashcards);
+    const shuffled = [...base].sort(() => Math.random() - 0.5);
+    return shuffled;
+  });
+  const [index, setIndex] = useState(0);
+  const [incorrectQueue, setIncorrectQueue] = useState<number[]>([]);
+  const [knownIds, setKnownIds] = useState<Set<string>>(new Set());
+
+  const card = deck[index];
+
+  const goNext = () => {
+    if (index < deck.length - 1) {
+      setIndex(index + 1);
+      return;
+    }
+    if (incorrectQueue.length > 0) {
+      const [next, ...rest] = incorrectQueue;
+      setIndex(next);
+      setIncorrectQueue(rest);
+    }
+  };
+
+  const handleUnknown = () => {
+    if (!incorrectQueue.includes(index)) setIncorrectQueue([...incorrectQueue, index]);
+    goNext();
+  };
+
+  const handleKnown = () => {
+    const current = deck[index];
+    if (current && !knownIds.has(current.id)) {
+      const next = new Set(knownIds);
+      next.add(current.id);
+      setKnownIds(next);
+    }
+    goNext();
+  };
+
+  const progress = deck.length > 0 ? knownIds.size / deck.length : 0;
+  const done = deck.length > 0 && knownIds.size === deck.length;
+
+  const reshuffleDeck = () => {
+    const base = mapToStudyCards(spanishFlashcards);
+    const shuffled = [...base].sort(() => Math.random() - 0.5);
+    setDeck(shuffled);
+    setIndex(0);
+    setIncorrectQueue([]);
+    setKnownIds(new Set());
+  };
+
+  useEffect(() => {
+    if (!done) return;
+    const t = setTimeout(() => {
+      reshuffleDeck();
+    }, 2500);
+    return () => clearTimeout(t);
+  }, [done]);
+
   return (
     <View className="flex-1 px-4 py-4 bg-surfaceSecondary dark:bg-surfaceSecondary-dark">
+      <View className="mb-4 w-full">
+        <ProgressBar progress={progress} height={8} />
+      </View>
+      <View className="items-center">
+        <ThemedText size="small" className="opacity-70">
+          {knownIds.size}/{deck.length}
+        </ThemedText>
+      </View>
       <View className="flex-1 justify-center items-center">
-        <Flashcard
-          frontLanguageLabel="Spanish"
-          frontText="Hola"
-          backLanguageLabel="English"
-          backText="Hello"
-        />
-        <FlashcardButtons />
+        {done ? (
+          <Animated.View entering={FadeInDown} exiting={FadeOutDown}>
+            <ThemedText weight="bold" className="text-[24px]">
+              All done!
+            </ThemedText>
+          </Animated.View>
+        ) : card ? (
+          <Animated.View
+            key={card.id}
+            entering={FadeInDown}
+            exiting={FadeOutDown}
+            className="w-full"
+          >
+            <Flashcard
+              frontLanguageLabel={card.frontLanguageLabel}
+              frontText={card.frontText}
+              backLanguageLabel={card.backLanguageLabel}
+              backText={card.backText}
+              examples={card.examples}
+            />
+          </Animated.View>
+        ) : null}
+        {!done && <FlashcardButtons onUnknown={handleUnknown} onKnown={handleKnown} />}
       </View>
     </View>
   );

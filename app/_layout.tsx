@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import '../global.css';
 
@@ -33,45 +34,47 @@ export default function RootLayout() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <Stack
-          screenOptions={{
-            headerTitleAlign: 'left',
-            headerShadowVisible: false,
-            headerTintColor: Colors[colorScheme ?? 'light'].text,
-            headerStyle: { backgroundColor: Colors[colorScheme ?? 'light'].background },
-            headerTitleStyle: {
-              fontSize: 22,
-              fontWeight: '700',
-              color: Colors[colorScheme ?? 'light'].text,
-            },
-            header: ({ options, navigation }) => (
-              <AppHeader
-                title={(options?.title as string) || ''}
-                showBackButton={navigation.canGoBack()}
-                onPressBack={() => navigation.goBack()}
-              />
-            ),
-            animation: 'slide_from_right',
-          }}
-        >
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen
-            name="(content)/builder/index"
-            options={{
-              title: 'Sentence Builder',
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+          <Stack
+            screenOptions={{
+              headerTitleAlign: 'left',
+              headerShadowVisible: false,
+              headerTintColor: Colors[colorScheme ?? 'light'].text,
+              headerStyle: { backgroundColor: Colors[colorScheme ?? 'light'].background },
+              headerTitleStyle: {
+                fontSize: 22,
+                fontWeight: '700',
+                color: Colors[colorScheme ?? 'light'].text,
+              },
+              header: ({ options, navigation }) => (
+                <AppHeader
+                  title={(options?.title as string) || ''}
+                  showBackButton={navigation.canGoBack()}
+                  onPressBack={() => navigation.goBack()}
+                />
+              ),
+              animation: 'slide_from_right',
             }}
-          />
+          >
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen
+              name="(content)/builder/index"
+              options={{
+                title: 'Sentence Builder',
+              }}
+            />
 
-          <Stack.Screen
-            name="(content)/config/index"
-            options={{
-              title: 'Settings',
-            }}
-          />
-        </Stack>
-        <StatusBar style="auto" />
-      </ThemeProvider>
+            <Stack.Screen
+              name="(content)/config/index"
+              options={{
+                title: 'Settings',
+              }}
+            />
+          </Stack>
+          <StatusBar style="auto" />
+        </ThemeProvider>
+      </GestureHandlerRootView>
     </QueryClientProvider>
   );
 }
