@@ -4,11 +4,13 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { HeaderBackButton } from '@react-navigation/elements';
 import { Tabs, useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { Platform, View } from 'react-native';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const router = useRouter();
+  const { t } = useTranslation();
 
   return (
     <Tabs
@@ -52,7 +54,7 @@ export default function TabLayout() {
           const showBack = navigation.canGoBack() || isSpeaking;
           return (
             <AppHeader
-              title={isHome ? '¡Hola!' : (options?.title as string) || ''}
+              title={isHome ? t('home.heading.helloTitle') : (options?.title as string) || ''}
               showBackButton={showBack}
               onPressBack={() =>
                 navigation.canGoBack() ? navigation.goBack() : router.push('/(tabs)')
@@ -74,7 +76,7 @@ export default function TabLayout() {
         name="index"
         options={{
           title: '',
-          tabBarLabel: 'Home',
+          tabBarLabel: t('common.tabs.home'),
           tabBarIcon: ({ color, size }) => (
             <View style={{ height: 24, alignItems: 'center', justifyContent: 'center' }}>
               <MaterialCommunityIcons name="square-rounded-outline" size={size} color={color} />
@@ -85,7 +87,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="flashcards"
         options={{
-          title: 'FlashCards',
+          title: t('common.tabs.flashcards'),
           tabBarIcon: ({ color, size }) => (
             <View style={{ height: 24, alignItems: 'center', justifyContent: 'center' }}>
               <MaterialCommunityIcons name="cards-outline" size={size} color={color} />
@@ -96,8 +98,8 @@ export default function TabLayout() {
       <Tabs.Screen
         name="builder"
         options={{
-          title: 'Choose a category',
-          tabBarLabel: 'Builder',
+          title: t('common.tabs.builder'),
+          tabBarLabel: t('common.tabs.builder'),
           tabBarIcon: ({ color, size }) => (
             <View style={{ height: 24, alignItems: 'center', justifyContent: 'center' }}>
               <MaterialCommunityIcons name="view-dashboard-outline" size={size} color={color} />
@@ -108,7 +110,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="speaking"
         options={{
-          title: 'Speaking',
+          title: t('common.tabs.speaking'),
           tabBarIcon: ({ color, size }) => (
             <View style={{ height: 24, alignItems: 'center', justifyContent: 'center' }}>
               <MaterialCommunityIcons name="microphone-outline" size={size} color={color} />
@@ -119,8 +121,8 @@ export default function TabLayout() {
       <Tabs.Screen
         name="stats"
         options={{
-          title: 'Statistics',
-          tabBarLabel: 'Statistics',
+          title: t('common.tabs.stats'),
+          tabBarLabel: t('common.tabs.stats'),
           tabBarIcon: ({ color, size }) => (
             <View style={{ height: 24, alignItems: 'center', justifyContent: 'center' }}>
               <MaterialCommunityIcons name="chart-box-outline" size={size} color={color} />

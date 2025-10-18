@@ -2,12 +2,14 @@ import { mapToStudyCards, spanishFlashcards } from '@/api/database/flashcards';
 import { ProgressBar } from '@/components/progress/ProgressBar';
 import { ThemedText } from '@/components/typography/ThemedText';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated';
 import { Flashcard } from './components/Flashcard';
 import { FlashcardButtons } from './components/FlashcardButtons';
 
 export function FlashcardsScreen() {
+  const { i18n, t } = useTranslation();
   const [deck, setDeck] = useState(() => {
     const base = mapToStudyCards(spanishFlashcards);
     const shuffled = [...base].sort(() => Math.random() - 0.5);
@@ -90,13 +92,26 @@ export function FlashcardsScreen() {
             exiting={FadeOutDown}
             className="w-full"
           >
-            <Flashcard
-              frontLanguageLabel={card.frontLanguageLabel}
-              frontText={card.frontText}
-              backLanguageLabel={card.backLanguageLabel}
-              backText={card.backText}
-              examples={card.examples}
-            />
+            {(() => {
+              const isPl = (i18n.language || 'en').startsWith('pl');
+              const backLanguageLabel = isPl
+                ? t('config.languagePolish')
+                : t('config.languageEnglish');
+              const backText = isPl ? card.backTextPl : card.backTextEn;
+              const examples = (card.examples || []).map((e) => ({
+                sentence: e.sentence,
+                translation: isPl ? e.translationPl : e.translationEn,
+              }));
+              return (
+                <Flashcard
+                  frontLanguageLabel={card.frontLanguageLabel}
+                  frontText={card.frontText}
+                  backLanguageLabel={backLanguageLabel}
+                  backText={backText}
+                  examples={examples}
+                />
+              );
+            })()}
           </Animated.View>
         ) : null}
         {!done && <FlashcardButtons onUnknown={handleUnknown} onKnown={handleKnown} />}

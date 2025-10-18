@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Pressable, View } from 'react-native';
 import { twMerge } from 'tailwind-merge';
 
-type Variant = 'primary' | 'light' | 'neutral';
+type Variant = 'primary' | 'light' | 'neutral' | 'danger';
 
 interface Props {
   icon: keyof typeof MaterialCommunityIcons.glyphMap;
@@ -32,7 +32,9 @@ export function ButtonIcon({
       ? 'bg-surfaceActionSecondary'
       : variant === 'light'
         ? 'bg-surfaceActionSecondaryLight dark:bg-surfaceActionSecondaryLight-dark'
-        : 'bg-surfacePrimary dark:bg-surfacePrimary-dark';
+        : variant === 'danger'
+          ? 'bg-[#ef4444]'
+          : 'bg-surfacePrimary dark:bg-surfacePrimary-dark';
 
   return (
     <Pressable

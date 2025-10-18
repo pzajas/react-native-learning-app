@@ -1,8 +1,9 @@
 import { ButtonIcon } from '@/components/buttons/ButtonIcon';
 import { ThemedText } from '@/components/typography/ThemedText';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Haptics from 'expo-haptics';
 import * as Speech from 'expo-speech';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { Pressable, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
@@ -13,6 +14,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
+import { useTranslation } from 'react-i18next';
 import type { FlashcardProps } from '../types/types';
 
 export const Flashcard = ({
@@ -23,6 +25,7 @@ export const Flashcard = ({
   examples,
   cloze,
 }: FlashcardProps) => {
+  const { t } = useTranslation();
   const progress = useSharedValue(0);
   const [isFront, setIsFront] = useState(true);
   const [exampleIndex, setExampleIndex] = useState(0);
@@ -50,36 +53,54 @@ export const Flashcard = ({
     return { transform: [{ translateX: swipeX.value }] } as const;
   });
 
-  const speakFront = () => {
+  const [speakingFront, setSpeakingFront] = useState(false);
+  const [speakingBack, setSpeakingBack] = useState(false);
+
+  const speakFront = async () => {
     Speech.stop();
-    Speech.speak(frontText, { language: 'es-ES' });
+    setSpeakingFront(true);
+    const stored = await AsyncStorage.getItem('tts-rate');
+    const rate = stored ? parseFloat(stored) : 1.0;
+    Speech.speak(frontText, {
+      language: 'es-ES',
+      rate,
+      onDone: () => setSpeakingFront(false),
+      onStopped: () => setSpeakingFront(false),
+      onError: () => setSpeakingFront(false),
+    } as any);
   };
 
-  const speakBack = () => {
+  const speakBack = async () => {
     Speech.stop();
     const sentence = examples?.[exampleIndex]?.sentence ?? backText;
-    Speech.speak(sentence, { language: 'es-ES' });
+    setSpeakingBack(true);
+    const stored = await AsyncStorage.getItem('tts-rate');
+    const rate = stored ? parseFloat(stored) : 1.0;
+    Speech.speak(sentence, {
+      language: 'es-ES',
+      rate,
+      onDone: () => setSpeakingBack(false),
+      onStopped: () => setSpeakingBack(false),
+      onError: () => setSpeakingBack(false),
+    } as any);
   };
 
   const sentence = examples?.[exampleIndex]?.sentence;
 
-  const highlightedSentence = useMemo(() => {
-    if (!sentence) return null;
-    const escaped = frontText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const highlightParts = (text: string | undefined, term: string) => {
+    if (!text) return null;
+    const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const re = new RegExp(`(${escaped})`, 'ig');
-    const parts = sentence.split(re);
+    const parts = text.split(re);
     return parts.map((part, i) => {
-      const match = part.toLowerCase() === frontText.toLowerCase();
+      const match = part.toLowerCase() === term.toLowerCase();
       return (
-        <ThemedText
-          key={i}
-          className={match ? 'font-montserratBold text-iconInfo dark:text-iconInfo-dark' : ''}
-        >
-          {match ? `«${part}»` : part}
+        <ThemedText key={i} className={match ? 'font-montserratBold' : ''}>
+          {part}
         </ThemedText>
       );
     });
-  }, [sentence, frontText]);
+  };
 
   const onSwipeEnd = (dx: number) => {
     if (!examples || examples.length <= 1) return;
@@ -119,7 +140,7 @@ export const Flashcard = ({
             <ButtonIcon
               icon="volume-high"
               diameter={52}
-              variant="neutral"
+              variant={speakingFront ? 'danger' : 'neutral'}
               stopPropagation
               onPress={speakFront}
             />
@@ -129,7 +150,7 @@ export const Flashcard = ({
             weight="medium"
             className="mt-3 text-iconInfo dark:text-iconInfo-dark"
           >
-            Tap to see translation
+            {t('flashcards.tapToSeeTranslation')}
           </ThemedText>
         </Animated.View>
 
@@ -155,10 +176,10 @@ export const Flashcard = ({
                           '____',
                         )
                       : null}
-                    {!cloze && highlightedSentence}
+                    {!cloze && highlightParts(sentence, frontText)}
                   </ThemedText>
                   <ThemedText size="medium" className="mt-2 text-center opacity-80">
-                    {examples[exampleIndex]?.translation ?? backText}
+                    {highlightParts(examples[exampleIndex]?.translation ?? backText, backText)}
                   </ThemedText>
                 </Animated.View>
               </GestureDetector>
@@ -177,7 +198,7 @@ export const Flashcard = ({
                     weight="medium"
                     className="mt-2 text-iconInfo dark:text-iconInfo-dark"
                   >
-                    Swipe to see next example
+                    {t('flashcards.swipeForNext')}
                   </ThemedText>
                 </View>
               ) : null}
@@ -191,7 +212,7 @@ export const Flashcard = ({
             <ButtonIcon
               icon="volume-high"
               diameter={52}
-              variant="neutral"
+              variant={speakingBack ? 'danger' : 'neutral'}
               stopPropagation
               onPress={speakBack}
             />
@@ -201,7 +222,7 @@ export const Flashcard = ({
             weight="medium"
             className="mt-3 text-iconInfo dark:text-iconInfo-dark"
           >
-            Tap to see original
+            {t('flashcards.tapToSeeOriginal')}
           </ThemedText>
         </Animated.View>
       </View>

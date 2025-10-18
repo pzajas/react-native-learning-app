@@ -1,6 +1,6 @@
 export interface SummaryStat {
   value: number;
-  label: string;
+  labelKey: string; // i18n key under stats.summary
 }
 
 export interface StreakInfo {
@@ -9,7 +9,7 @@ export interface StreakInfo {
 }
 
 export interface ProgressPoint {
-  label: string;
+  labelKey: string; // i18n key under weekdays
   value: number; // 0..1 normalized height
   highlight?: boolean;
 }

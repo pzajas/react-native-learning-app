@@ -1,11 +1,13 @@
 import { AppHeader } from '@/components/headers/AppHeader';
 import { Colors } from '@/constants/color';
 import { useColorScheme } from '@/hooks/useColorScheme';
+import i18n from '@/i18n';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { I18nextProvider, useTranslation } from 'react-i18next';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import '../global.css';
@@ -22,6 +24,7 @@ const queryClient = new QueryClient({
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  const { t } = useTranslation();
   const [loaded] = useFonts({
     MontserratRegular: require('../assets/fonts/Montserrat-Regular.ttf'),
     MontserratSemiBold: require('../assets/fonts/Montserrat-SemiBold.ttf'),
@@ -35,45 +38,47 @@ export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-          <Stack
-            screenOptions={{
-              headerTitleAlign: 'left',
-              headerShadowVisible: false,
-              headerTintColor: Colors[colorScheme ?? 'light'].text,
-              headerStyle: { backgroundColor: Colors[colorScheme ?? 'light'].background },
-              headerTitleStyle: {
-                fontSize: 22,
-                fontWeight: '700',
-                color: Colors[colorScheme ?? 'light'].text,
-              },
-              header: ({ options, navigation }) => (
-                <AppHeader
-                  title={(options?.title as string) || ''}
-                  showBackButton={navigation.canGoBack()}
-                  onPressBack={() => navigation.goBack()}
-                />
-              ),
-              animation: 'slide_from_right',
-            }}
-          >
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen
-              name="(content)/builder/index"
-              options={{
-                title: 'Sentence Builder',
+        <I18nextProvider i18n={i18n}>
+          <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+            <Stack
+              screenOptions={{
+                headerTitleAlign: 'left',
+                headerShadowVisible: false,
+                headerTintColor: Colors[colorScheme ?? 'light'].text,
+                headerStyle: { backgroundColor: Colors[colorScheme ?? 'light'].background },
+                headerTitleStyle: {
+                  fontSize: 22,
+                  fontWeight: '700',
+                  color: Colors[colorScheme ?? 'light'].text,
+                },
+                header: ({ options, navigation }) => (
+                  <AppHeader
+                    title={(options?.title as string) || ''}
+                    showBackButton={navigation.canGoBack()}
+                    onPressBack={() => navigation.goBack()}
+                  />
+                ),
+                animation: 'slide_from_right',
               }}
-            />
+            >
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen
+                name="(content)/builder/index"
+                options={{
+                  title: t('layout.sentenceBuilder'),
+                }}
+              />
 
-            <Stack.Screen
-              name="(content)/config/index"
-              options={{
-                title: 'Settings',
-              }}
-            />
-          </Stack>
-          <StatusBar style="auto" />
-        </ThemeProvider>
+              <Stack.Screen
+                name="(content)/config/index"
+                options={{
+                  title: t('layout.settings'),
+                }}
+              />
+            </Stack>
+            <StatusBar style="auto" />
+          </ThemeProvider>
+        </I18nextProvider>
       </GestureHandlerRootView>
     </QueryClientProvider>
   );
