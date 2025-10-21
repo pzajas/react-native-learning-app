@@ -18,7 +18,7 @@ const LANGUAGE_DETECTOR: Module & {
   detect: async (callback: (lng: string) => void) => {
     try {
       const savedLanguage = await AsyncStorage.getItem('user-language');
-      callback(savedLanguage || 'en');
+      callback(savedLanguage || 'pl');
     } catch (error) {
       console.error('Error reading language from AsyncStorage:', error);
       callback('en');
@@ -42,7 +42,7 @@ i18n
       en: { translation: en },
       pl: { translation: pl },
     },
-    fallbackLng: 'en',
+    fallbackLng: 'pl',
     interpolation: { escapeValue: false },
     react: { useSuspense: false },
   });
