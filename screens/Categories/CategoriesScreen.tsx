@@ -19,7 +19,7 @@ export function CategoriesScreen() {
   return (
     <ScrollView
       className="flex-1 bg-surfaceSecondary dark:bg-surfaceSecondary-dark"
-      contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 16 }}
+      contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 100 }}
     >
       <View className="gap-3 mt-2">
         {categoryCards.map((c) => (

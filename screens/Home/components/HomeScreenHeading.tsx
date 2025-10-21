@@ -5,12 +5,12 @@ import { View } from 'react-native';
 export function HomeScreenHeading() {
   const { t } = useTranslation();
   return (
-    <View className="items-center">
+    <View className="items-center px-4">
       <ThemedText className="text-[40px] pb-4">👋</ThemedText>
-      <ThemedText weight="bold" className="text-fontSize5xl">
+      <ThemedText weight="bold" className="text-fontSize5xl text-center">
         {t('home.heading.welcomeLine1')}
       </ThemedText>
-      <ThemedText weight="bold" className="text-fontSize5xl">
+      <ThemedText weight="bold" className="text-fontSize5xl text-center">
         {t('home.heading.welcomeLine2')}
       </ThemedText>
       <ThemedText
