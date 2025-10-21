@@ -87,18 +87,47 @@ export const Flashcard = ({
 
   const sentence = examples?.[exampleIndex]?.sentence;
 
+  const removeDiacritics = (s: string) =>
+    s
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .normalize('NFC');
+
   const highlightParts = (text: string | undefined, term: string) => {
     if (!text) return null;
-    const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const re = new RegExp(`(${escaped})`, 'ig');
-    const parts = text.split(re);
-    return parts.map((part, i) => {
-      const match = part.toLowerCase() === term.toLowerCase();
-      return (
-        <ThemedText key={i} className={match ? 'font-montserratBold' : ''}>
-          {part}
-        </ThemedText>
-      );
+    // Split term into candidate synonyms (e.g., "lepszy;najlepszy" or "to be able to;can")
+    const termCandidates = term
+      .split(/[;,/]|\bor\b/)
+      .map((s) => s.trim())
+      .filter(Boolean);
+
+    const prepared = termCandidates.map((candidate) => {
+      const norm = removeDiacritics(candidate).toLowerCase();
+      const len = norm.length;
+      const stemLen = len >= 6 ? 5 : len >= 4 ? 4 : len;
+      const stem = norm.slice(0, stemLen);
+      return { norm, stem, stemLen } as const;
+    });
+
+    // Split into word and non-word chunks without Unicode property escapes
+    const chunks = text.match(/([A-Za-z\u00C0-\u017F]+|[^A-Za-z\u00C0-\u017F]+)/g) || [text];
+    return chunks.map((chunk, idx) => {
+      // If chunk is a word
+      if (/^[A-Za-z\u00C0-\u017F]+$/.test(chunk)) {
+        const normCore = removeDiacritics(chunk).toLowerCase();
+        const shouldBold = prepared.some(({ norm, stem, stemLen }) => {
+          const isExact = normCore === norm;
+          const isStem = stemLen >= 3 && normCore.startsWith(stem);
+          return isExact || isStem;
+        });
+        return (
+          <ThemedText key={`w-${idx}`} weight={shouldBold ? 'bold' : 'regular'}>
+            {chunk}
+          </ThemedText>
+        );
+      }
+      // Non-word chunk (spaces, punctuation)
+      return <ThemedText key={`t-${idx}`}>{chunk}</ThemedText>;
     });
   };
 

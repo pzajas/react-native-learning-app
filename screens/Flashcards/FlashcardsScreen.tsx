@@ -8,12 +8,23 @@ import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated';
 import { Flashcard } from './components/Flashcard';
 import { FlashcardButtons } from './components/FlashcardButtons';
 
+function pickRandomEntries<T>(items: T[], desiredCount: number): T[] {
+  if (items.length <= desiredCount) return [...items];
+  const selectedIndices = new Set<number>();
+  while (selectedIndices.size < desiredCount) {
+    selectedIndices.add(Math.floor(Math.random() * items.length));
+  }
+  const result: T[] = [];
+  selectedIndices.forEach((index) => result.push(items[index]));
+  return result;
+}
+
 export function FlashcardsScreen() {
   const { i18n, t } = useTranslation();
   const [deck, setDeck] = useState(() => {
-    const base = mapToStudyCards(spanishFlashcards);
-    const shuffled = [...base].sort(() => Math.random() - 0.5);
-    return shuffled;
+    const selection = pickRandomEntries(spanishFlashcards, 10);
+    const base = mapToStudyCards(selection);
+    return [...base].sort(() => Math.random() - 0.5);
   });
   const [index, setIndex] = useState(0);
   const [incorrectQueue, setIncorrectQueue] = useState<number[]>([]);
@@ -52,7 +63,8 @@ export function FlashcardsScreen() {
   const done = deck.length > 0 && knownIds.size === deck.length;
 
   const reshuffleDeck = () => {
-    const base = mapToStudyCards(spanishFlashcards);
+    const selection = pickRandomEntries(spanishFlashcards, 10);
+    const base = mapToStudyCards(selection);
     const shuffled = [...base].sort(() => Math.random() - 0.5);
     setDeck(shuffled);
     setIndex(0);
