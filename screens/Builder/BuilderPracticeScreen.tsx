@@ -1,5 +1,6 @@
 import { ThemedText } from '@/components/typography/ThemedText';
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import { BuilderProgressSection } from './components/BuilderProgressSection';
 import { BuilderWordAreas } from './components/BuilderWordAreas';
@@ -15,8 +16,14 @@ export function BuilderPracticeScreen({ categoryKey, subKey }: Props) {
     () => (categoryKey && subKey ? getSentences(categoryKey, subKey) : []),
     [categoryKey, subKey],
   );
+  const { i18n } = useTranslation();
   const [idx, setIdx] = useState(0);
   const current = sentences[idx];
+  const prompt = current
+    ? i18n.language?.startsWith('pl')
+      ? current.promptPl
+      : current.promptEn
+    : '';
   const expectedWords = useMemo(() => (current ? current.targetEs.split(' ') : []), [current]);
   const [poolWords, setPoolWords] = useState<string[]>([]);
   const [selectedWords, setSelectedWords] = useState<string[]>([]);
@@ -62,6 +69,7 @@ export function BuilderPracticeScreen({ categoryKey, subKey }: Props) {
         expectedWords={expectedWords}
         addWord={addWord}
         removeWord={removeWord}
+        prompt={prompt}
       />
       {current && (
         <View className="items-center mt-4">
