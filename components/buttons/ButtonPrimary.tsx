@@ -63,7 +63,7 @@ const getTextClasses = (variant: ButtonVariant, disabled: boolean, pressed: bool
 
   switch (variant) {
     case 'secondary':
-      return twMerge(baseClasses, 'text-textAction dark:text-textAction-dark');
+      return twMerge(baseClasses, 'text-textPrimary dark:text-textPrimary-dark');
     case 'secondaryBlue':
       return twMerge(baseClasses, 'text-white');
     case 'secondaryBlueLight':
