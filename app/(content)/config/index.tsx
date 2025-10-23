@@ -1,9 +1,10 @@
 import { ButtonPrimary } from '@/components/buttons/ButtonPrimary';
 import { ThemedText } from '@/components/typography/ThemedText';
 import i18n from '@/i18n';
+import ThemeContext from '@/src/ThemeContext';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -14,6 +15,7 @@ export default function ConfigScreen() {
   const insets = useSafeAreaInsets();
   const { t } = useTranslation();
   const [ttsRate, setTtsRate] = useState(1.0);
+  const { scheme, setScheme } = useContext(ThemeContext);
 
   useEffect(() => {
     (async () => {
@@ -96,7 +98,7 @@ export default function ConfigScreen() {
         </View>
 
         <View className="p-4 bg-surfacePrimary dark:bg-surfacePrimary-dark gap-2">
-          <ThemedText weight="bold">TTS speed</ThemedText>
+          <ThemedText weight="bold">{t('config.ttsSpeed')}</ThemedText>
           <View className="flex-row justify-between">
             <ThemedText size="small">0.5x</ThemedText>
             <ThemedText size="small">{ttsRate.toFixed(2)}x</ThemedText>
@@ -122,6 +124,46 @@ export default function ConfigScreen() {
               />
             ))}
           </View>
+        </View>
+
+        <View className="p-4 bg-surfacePrimary dark:bg-surfacePrimary-dark flex-row items-center justify-between">
+          <View>
+            <ThemedText weight="bold">{t('config.darkMode')}</ThemedText>
+            <ThemedText
+              size="small"
+              className="mt-1 text-textSecondary dark:text-textSecondary-dark"
+            >
+              {scheme === 'dark' ? t('config.enabled') : t('config.disabled')}
+            </ThemedText>
+          </View>
+          <Pressable
+            accessibilityRole="switch"
+            accessibilityState={{ checked: scheme === 'dark' }}
+            onPress={async () => {
+              try {
+                await setScheme(scheme === 'dark' ? 'light' : 'dark');
+              } catch {}
+            }}
+            className={
+              scheme === 'dark'
+                ? 'w-14 h-8 rounded-full bg-surfaceActionSecondary flex-row items-center px-1'
+                : 'w-14 h-8 rounded-full bg-surfaceTertiary dark:bg-surfaceTertiary-dark flex-row items-center px-1'
+            }
+          >
+            <View
+              className={
+                scheme === 'dark'
+                  ? 'ml-auto w-6 h-6 rounded-full items-center justify-center bg-white'
+                  : 'w-6 h-6 rounded-full items-center justify-center bg-white'
+              }
+            >
+              {scheme === 'dark' ? (
+                <MaterialCommunityIcons name="check" size={16} color="#0d59f2" />
+              ) : (
+                <MaterialCommunityIcons name="close" size={16} color="#767676" />
+              )}
+            </View>
+          </Pressable>
         </View>
       </View>
 
