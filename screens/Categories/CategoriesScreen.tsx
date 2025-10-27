@@ -23,7 +23,7 @@ export function CategoriesScreen() {
       contentContainerStyle={{
         paddingHorizontal: 16,
         paddingTop: 16,
-        paddingBottom: height * 0.12,
+        paddingBottom: height * 0.15,
       }}
     >
       <View className="gap-3 mt-2">
