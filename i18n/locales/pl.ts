@@ -25,6 +25,10 @@ export default {
     languageEnglish: 'Angielski',
     languagePolish: 'Polski',
     offlineMode: 'Tryb offline',
+    ttsSpeed: 'Prędkość TTS',
+    darkMode: 'Tryb ciemny',
+    enabled: 'Włączony',
+    disabled: 'Wyłączony',
   },
   home: {
     heading: {

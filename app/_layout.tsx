@@ -2,6 +2,7 @@ import { AppHeader } from '@/components/headers/AppHeader';
 import { Colors } from '@/constants/color';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import i18n from '@/i18n';
+import ThemeContext, { ThemeProvider as AppThemeProvider } from '@/src/ThemeContext';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useFonts } from 'expo-font';
@@ -39,45 +40,54 @@ export default function RootLayout() {
     <QueryClientProvider client={queryClient}>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <I18nextProvider i18n={i18n}>
-          <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-            <Stack
-              screenOptions={{
-                headerTitleAlign: 'left',
-                headerShadowVisible: false,
-                headerTintColor: Colors[colorScheme ?? 'light'].text,
-                headerStyle: { backgroundColor: Colors[colorScheme ?? 'light'].background },
-                headerTitleStyle: {
-                  fontSize: 22,
-                  fontWeight: '700',
-                  color: Colors[colorScheme ?? 'light'].text,
-                },
-                header: ({ options, navigation }) => (
-                  <AppHeader
-                    title={(options?.title as string) || ''}
-                    showBackButton={navigation.canGoBack()}
-                    onPressBack={() => navigation.goBack()}
-                  />
-                ),
-                animation: 'slide_from_right',
-              }}
-            >
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen
-                name="(content)/builder/index"
-                options={{
-                  title: t('layout.sentenceBuilder'),
-                }}
-              />
+          <AppThemeProvider defaultScheme={colorScheme === 'dark' ? 'dark' : 'light'}>
+            <ThemeContext.Consumer>
+              {({ scheme }) => {
+                const resolved = scheme ?? (colorScheme === 'dark' ? 'dark' : 'light');
+                return (
+                  <ThemeProvider value={resolved === 'dark' ? DarkTheme : DefaultTheme}>
+                    <Stack
+                      screenOptions={{
+                        headerTitleAlign: 'left',
+                        headerShadowVisible: false,
+                        headerTintColor: Colors[resolved ?? 'light'].text,
+                        headerStyle: { backgroundColor: Colors[resolved ?? 'light'].background },
+                        headerTitleStyle: {
+                          fontSize: 22,
+                          fontWeight: '700',
+                          color: Colors[resolved ?? 'light'].text,
+                        },
+                        header: ({ options, navigation }) => (
+                          <AppHeader
+                            title={(options?.title as string) || ''}
+                            showBackButton={navigation.canGoBack()}
+                            onPressBack={() => navigation.goBack()}
+                          />
+                        ),
+                        animation: 'slide_from_right',
+                      }}
+                    >
+                      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                      <Stack.Screen
+                        name="(content)/builder/index"
+                        options={{
+                          title: t('layout.sentenceBuilder'),
+                        }}
+                      />
 
-              <Stack.Screen
-                name="(content)/config/index"
-                options={{
-                  title: t('layout.settings'),
-                }}
-              />
-            </Stack>
-            <StatusBar style="auto" />
-          </ThemeProvider>
+                      <Stack.Screen
+                        name="(content)/config/index"
+                        options={{
+                          title: t('layout.settings'),
+                        }}
+                      />
+                    </Stack>
+                    <StatusBar style={resolved === 'dark' ? 'light' : 'dark'} />
+                  </ThemeProvider>
+                );
+              }}
+            </ThemeContext.Consumer>
+          </AppThemeProvider>
         </I18nextProvider>
       </GestureHandlerRootView>
     </QueryClientProvider>

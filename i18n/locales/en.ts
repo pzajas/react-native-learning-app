@@ -25,6 +25,10 @@ export default {
     languageEnglish: 'English',
     languagePolish: 'Polish',
     offlineMode: 'Offline Mode',
+    ttsSpeed: 'TTS speed',
+    darkMode: 'Dark mode',
+    enabled: 'Enabled',
+    disabled: 'Disabled',
   },
   home: {
     heading: {

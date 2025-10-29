@@ -7,6 +7,7 @@ interface Props extends BuilderWordMoveHandlers {
   selectedWords: string[];
   poolWords: string[];
   expectedWords: string[];
+  prompt: string;
 }
 
 export function BuilderWordAreas({
@@ -15,6 +16,7 @@ export function BuilderWordAreas({
   expectedWords,
   addWord,
   removeWord,
+  prompt,
 }: Props) {
   const { t } = useTranslation();
   return (
@@ -23,8 +25,8 @@ export function BuilderWordAreas({
         <ThemedText size="small" className="text-textSecondary dark:text-textSecondary-dark">
           {t('builder.translate')}
         </ThemedText>
-        <ThemedText weight="bold" className="mt-2 text-[24px]">
-          {t('builder.examplePrompt')}
+        <ThemedText weight="bold" className="mt-2 text-[24px] text-center">
+          {prompt}
         </ThemedText>
       </View>
 

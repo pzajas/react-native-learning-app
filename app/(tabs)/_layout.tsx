@@ -5,12 +5,13 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { HeaderBackButton } from '@react-navigation/elements';
 import { Tabs, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Platform, View } from 'react-native';
+import { Dimensions, Platform, View } from 'react-native';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const router = useRouter();
   const { t } = useTranslation();
+  const { height, width } = Dimensions.get('window');
 
   return (
     <Tabs
@@ -67,8 +68,11 @@ export default function TabLayout() {
         tabBarStyle: Platform.select({
           ios: {
             position: 'absolute',
+            height: height * 0.135,
           },
-          default: {},
+          default: {
+            height: height * 0.135,
+          },
         }),
       })}
     >
