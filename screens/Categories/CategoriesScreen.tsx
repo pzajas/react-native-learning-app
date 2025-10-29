@@ -1,12 +1,13 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Dimensions, ScrollView, View } from 'react-native';
+import { Dimensions, Platform, ScrollView, View } from 'react-native';
 import { CategoryItem } from './components/CategoryItem';
 import { categoryCards } from './data/cards';
 
 const { height } = Dimensions.get('window');
 export function CategoriesScreen() {
   const router = useRouter();
+  const paddingBottom = Platform.OS === 'ios' ? height * 0.125 : height * 0.16;
   const [expandedKey, setExpandedKey] = useState<string | null>(null);
   const handleToggle = (key: string) => {
     setExpandedKey((prev) => (prev === key ? null : key));
@@ -23,7 +24,7 @@ export function CategoriesScreen() {
       contentContainerStyle={{
         paddingHorizontal: 16,
         paddingTop: 16,
-        paddingBottom: height * 0.15,
+        paddingBottom: paddingBottom,
       }}
     >
       <View className="gap-3 mt-2">
