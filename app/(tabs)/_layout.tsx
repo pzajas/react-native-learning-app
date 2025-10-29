@@ -127,6 +127,7 @@ export default function TabLayout() {
           ),
         }}
       />*/}
+      {/*
       <Tabs.Screen
         name="stats"
         options={{
@@ -138,7 +139,7 @@ export default function TabLayout() {
             </View>
           ),
         }}
-      />
+      />*/}
     </Tabs>
   );
 }
