@@ -45,6 +45,11 @@ export const useVoiceRecognition = ({
 
   useEffect(() => {
     const initializeAndSetupVoice = async () => {
+      if (!Voice) {
+        console.warn('Voice module not available');
+        return;
+      }
+
       VoiceRef.current = Voice;
 
       Voice.onSpeechStart = () => {
