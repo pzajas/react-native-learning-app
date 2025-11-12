@@ -113,6 +113,8 @@ export default {
     last7Days: 'Ostatnie 7 dni',
     newWordsLearned: 'Nowe słowa',
     currentStreak: 'Aktualna passa',
+    keepItUp: 'Świetnie idzie — nie przerywaj passy!',
+    startLearning: 'Zacznij uczyć się już dziś!',
     days: 'dni',
     summary: {
       learned: 'Nauczone',
