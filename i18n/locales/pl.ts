@@ -7,6 +7,8 @@ export default {
       settings: 'Ustawienia',
       back: 'Wstecz',
       apply: 'Zastosuj',
+      allCategories: 'Wszystkie kategorie',
+      close: 'Zamknij',
     },
     tabs: {
       home: 'Start',
@@ -45,6 +47,7 @@ export default {
     tapToSeeTranslation: 'Dotknij, aby zobaczyć tłumaczenie',
     tapToSeeOriginal: 'Dotknij, aby zobaczyć oryginał',
     swipeForNext: 'Przesuń, aby zobaczyć kolejny przykład',
+    selectCategory: 'Wybierz kategorię',
   },
   builder: {
     check: 'Sprawdź',

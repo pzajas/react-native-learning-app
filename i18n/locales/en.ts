@@ -7,6 +7,8 @@ export default {
       settings: 'Settings',
       back: 'Back',
       apply: 'Apply',
+      allCategories: 'All categories',
+      close: 'Close',
     },
     tabs: {
       home: 'Home',
@@ -45,6 +47,7 @@ export default {
     tapToSeeTranslation: 'Tap to see translation',
     tapToSeeOriginal: 'Tap to see original',
     swipeForNext: 'Swipe to see next example',
+    selectCategory: 'Select category',
   },
   builder: {
     check: 'Check',
