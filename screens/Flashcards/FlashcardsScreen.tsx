@@ -72,6 +72,12 @@ export function FlashcardsScreen() {
     goNext();
   };
 
+  useEffect(() => {
+    if (knownIds.size === 1) {
+      import('@/screens/Stats/storage').then((m) => m.addLearnedToday()).catch(console.error);
+    }
+  }, [knownIds.size]);
+
   const progress = deck.length > 0 ? knownIds.size / deck.length : 0;
   const done = deck.length > 0 && knownIds.size === deck.length;
 

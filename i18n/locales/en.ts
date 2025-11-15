@@ -116,6 +116,8 @@ export default {
     last7Days: 'Last 7 Days',
     newWordsLearned: 'New words learned',
     currentStreak: 'Current Streak',
+    keepItUp: "Keep it up — don't break the streak!",
+    startLearning: 'Start learning today!',
     days: 'Days',
     summary: {
       learned: 'Learned',
